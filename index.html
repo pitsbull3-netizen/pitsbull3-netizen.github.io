@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Андрей & Ольга — Свадебный фотоальбом</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -507,9 +510,26 @@
 <div class="footer">Сделано с любовью | Андрей & Ольга | 1 августа 2026</div>
 
 <script>
-    // ========== ВАШИ ДАННЫЕ ==========
+    // ========== КЛЮЧИ И НАСТРОЙКИ (всё вставлено) ==========
+    // ImgBB
     const IMGBB_API_KEY = '9432191b49fc4c02f1296699ca849975';
     const ALBUM_ID = 'RTbDyX';
+
+    // Firebase конфигурация (ваша, из консоли)
+    const firebaseConfig = {
+        apiKey: "AIzaSyD1VExlZZ6aizMe9jMZ_Pw7zo3ko4jhrmw",
+        authDomain: "weddingalbum2026-654c9.firebaseapp.com",
+        databaseURL: "https://weddingalbum2026-654c9-default-rtdb.firebaseio.com",
+        projectId: "weddingalbum2026-654c9",
+        storageBucket: "weddingalbum2026-654c9.firebasestorage.app",
+        messagingSenderId: "32362172364",
+        appId: "1:32362172364:web:422533879dfe3a95859769"
+    };
+
+    // Инициализация Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const photosRef = database.ref('wedding_photos');
 
     // Глобальные переменные
     let selectedFile = null;
@@ -571,7 +591,7 @@
         const fill = document.getElementById('progressFill');
 
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Загрузка...';
+        btn.innerHTML = '⏳ Загрузка...';
         progress.classList.add('active');
         fill.style.width = '40%';
 
@@ -581,20 +601,35 @@
         formData.append('album', ALBUM_ID);
 
         try {
+            // Шаг 1: загружаем фото на ImgBB
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
                 method: 'POST',
                 body: formData
             });
             const data = await response.json();
+
             if (data.success) {
+                fill.style.width = '70%';
+                
+                // Шаг 2: сохраняем ссылку в Firebase
+                const photoData = {
+                    url: data.data.url,
+                    thumb: data.data.thumb?.url || data.data.url,
+                    name: guestName,
+                    timestamp: Date.now(),
+                    date: new Date().toISOString()
+                };
+                
+                await photosRef.push(photoData);
+                
                 fill.style.width = '100%';
                 setTimeout(() => {
                     document.getElementById('uploadForm').style.display = 'none';
                     document.getElementById('successMsg').style.display = 'block';
                 }, 300);
-                showToast('Фото добавлено в альбом!');
+                showToast('Фото добавлено в общий альбом!');
             } else {
-                throw new Error(data.error?.message || 'Ошибка загрузки');
+                throw new Error(data.error?.message || 'Ошибка загрузки в ImgBB');
             }
         } catch (err) {
             showToast('Ошибка: ' + err.message);
@@ -617,25 +652,37 @@
         document.getElementById('successMsg').style.display = 'none';
     }
 
-    // Загрузка альбома
+    // Загрузка галереи из Firebase
     async function loadGallery() {
+        const empty = document.getElementById('emptyState');
+        const scroll = document.getElementById('galleryScroll');
+        
+        empty.style.display = 'block';
+        scroll.style.display = 'none';
+        
         try {
-            const url = `https://api.imgbb.com/1/album/${ALBUM_ID}?key=${IMGBB_API_KEY}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            if (data.success && data.data && data.data.images) {
-                const images = data.data.images;
-                if (images.length === 0) { showEmptyGallery(); return; }
-                images.sort((a,b) => (b.time || 0) - (a.time || 0));
-                renderGallery(images);
-                currentPhotos = images;
-            } else {
+            const snapshot = await photosRef.once('value');
+            const photos = [];
+            
+            snapshot.forEach((childSnapshot) => {
+                const photo = childSnapshot.val();
+                photo.id = childSnapshot.key;
+                photos.push(photo);
+            });
+            
+            if (photos.length === 0) {
                 showEmptyGallery();
+                return;
             }
+            
+            photos.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            renderGallery(photos);
+            currentPhotos = photos;
+            
         } catch (err) {
             console.error(err);
             showEmptyGallery();
-            showToast('Не удалось загрузить альбом');
+            showToast('Не удалось загрузить альбом из Firebase');
         }
     }
 
@@ -643,14 +690,17 @@
         const grid = document.getElementById('galleryGrid');
         const empty = document.getElementById('emptyState');
         const scroll = document.getElementById('galleryScroll');
+        
         if (!photos.length) { showEmptyGallery(); return; }
+        
         empty.style.display = 'none';
         scroll.style.display = 'block';
         grid.innerHTML = '';
+        
         photos.forEach((photo, idx) => {
-            const thumb = photo.thumb?.url || photo.url;
-            const name = photo.title ? photo.title.split('_')[0] : 'Гость';
-            const date = photo.time ? new Date(photo.time * 1000).toLocaleString() : '';
+            const thumb = photo.thumb || photo.url;
+            const name = photo.name || 'Гость';
+            const date = photo.date ? new Date(photo.date).toLocaleString() : '';
             const div = document.createElement('div');
             div.className = 'gallery-item';
             div.innerHTML = `<img src="${thumb}" loading="lazy" alt="wedding"><div class="overlay">${escapeHtml(name)}<br>${date}</div>`;
@@ -671,7 +721,7 @@
         if (!currentPhotos.length) return;
         currentLightboxIndex = index;
         const photo = currentPhotos[index];
-        const fullUrl = photo.url || photo.image?.url;
+        const fullUrl = photo.url;
         document.getElementById('lightboxImg').src = fullUrl;
         document.getElementById('lightbox').classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -717,7 +767,7 @@
             petal.style.animationDuration = 6 + Math.random() * 12 + 's';
             petal.style.animationDelay = Math.random() * 15 + 's';
             petal.style.opacity = 0.2 + Math.random() * 0.4;
-            petal.style.background = `#F3D1BC`;
+            petal.style.background = '#F3D1BC';
             container.appendChild(petal);
         }
     }
