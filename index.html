@@ -21,6 +21,7 @@
             color: #3E3A35;
             min-height: 100vh;
             overflow-x: hidden;
+            padding-bottom: 70px; /* отступ под нижнюю навигацию */
         }
 
         body::before {
@@ -37,6 +38,7 @@
             z-index: 0;
         }
 
+        /* Плавающие лепестки */
         .petals {
             position: fixed;
             top: 0;
@@ -55,18 +57,13 @@
             animation: floatPetals linear infinite;
         }
         @keyframes floatPetals {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
             10% { opacity: 0.6; }
             90% { opacity: 0.4; }
-            100% {
-                transform: translateY(110vh) rotate(720deg);
-                opacity: 0;
-            }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
         }
 
+        /* Hero */
         .hero {
             position: relative;
             min-height: 100vh;
@@ -78,7 +75,6 @@
             background: linear-gradient(145deg, #FEFAF5 0%, #F9F0E6 100%);
             z-index: 2;
         }
-
         .hero-content {
             max-width: 700px;
             background: rgba(255, 250, 245, 0.7);
@@ -88,91 +84,73 @@
             box-shadow: 0 25px 45px rgba(140, 90, 40, 0.08);
             border: 1px solid rgba(217, 180, 139, 0.3);
         }
-
-        .wedding-icon {
-            font-size: 3.2rem;
-            margin-bottom: 0.5rem;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.05));
-        }
-
+        .wedding-icon { font-size: 3.2rem; margin-bottom: 0.5rem; }
         h1 {
             font-family: 'Playfair Display', serif;
             font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 600;
-            letter-spacing: -0.01em;
             color: #4A3B2C;
-            margin-bottom: 0.5rem;
         }
-        h1 span {
-            color: #D9B48B;
-            font-weight: 400;
-        }
+        h1 span { color: #D9B48B; font-weight: 400; }
         .date {
             font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
             letter-spacing: 0.2em;
             color: #B68B6E;
-            margin-top: -0.2rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
+            margin: 0.5rem 0;
         }
         .divider {
             width: 90px;
             height: 2px;
             background: linear-gradient(90deg, transparent, #D9B48B, #EACCB0, #D9B48B, transparent);
-            margin: 1.2rem auto;
+            margin: 1rem auto;
         }
         .hero-text {
-            font-family: 'Raleway', serif;
             font-size: 1.1rem;
             line-height: 1.6;
             color: #6A5A4C;
             margin-bottom: 2rem;
-            font-weight: 400;
         }
+
+        /* Кнопки */
         .buttons {
             display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.8rem 2rem;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 50px;
-            font-family: 'Raleway', sans-serif;
             font-weight: 600;
             font-size: 0.9rem;
-            letter-spacing: 0.05em;
             cursor: pointer;
-            transition: 0.3s ease;
+            transition: 0.2s;
             border: none;
             background: none;
         }
         .btn-primary {
             background: linear-gradient(105deg, #E2C9B0, #D9B48B);
             color: #3A2C1F;
-            box-shadow: 0 6px 14px rgba(187, 136, 88, 0.25);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 22px rgba(187, 136, 88, 0.35);
-            background: linear-gradient(105deg, #E9D0B6, #E0BB92);
+            transform: translateY(-2px);
         }
         .btn-secondary {
             border: 1.5px solid #D9B48B;
             color: #8B694C;
             background: rgba(255,252,247,0.6);
-            backdrop-filter: blur(2px);
         }
         .btn-secondary:hover {
             background: #D9B48B;
             color: white;
-            border-color: #D9B48B;
         }
 
+        /* Модалки */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -180,39 +158,32 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(80, 60, 40, 0.4);
-            backdrop-filter: blur(8px);
+            background: rgba(80, 60, 40, 0.5);
+            backdrop-filter: blur(5px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 1rem;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
         .modal {
             background: #FFFDF9;
-            border-radius: 48px;
+            border-radius: 40px;
             max-width: 700px;
             width: 100%;
             max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 30px 50px rgba(0,0,0,0.2);
-            border: 1px solid #EEDDCB;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
         }
         .modal-header {
-            padding: 1.8rem 2rem 0.5rem;
+            padding: 1.5rem 2rem 0;
             text-align: center;
         }
         .modal-header h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 500;
-            color: #4E3F30;
-        }
-        .modal-header p {
-            color: #B29A82;
-            font-size: 0.85rem;
         }
         .modal-body {
             padding: 1.5rem 2rem 2rem;
@@ -220,41 +191,47 @@
         .modal-close {
             position: absolute;
             top: 1rem;
-            right: 1.4rem;
-            background: none;
+            right: 1.2rem;
+            background: rgba(0,0,0,0.1);
             border: none;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             cursor: pointer;
-            color: #CBB59A;
+            color: #4A3B2C;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: 0.2s;
         }
+        .modal-close:hover {
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Upload area */
         .upload-area {
             border: 2px dashed #F0DECC;
-            border-radius: 32px;
+            border-radius: 28px;
             padding: 2rem;
             text-align: center;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.2s;
             background: #FEFBF7;
         }
         .upload-area:hover {
             border-color: #D9B48B;
             background: #FEF8F2;
         }
-        .upload-icon {
-            font-size: 2.8rem;
-            margin-bottom: 0.5rem;
-        }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .name-input {
             width: 100%;
-            padding: 0.8rem 1.2rem;
+            padding: 0.8rem 1rem;
             border: 1.5px solid #EBDCCF;
             border-radius: 60px;
             margin: 1.5rem 0 1rem;
             font-size: 0.95rem;
             outline: none;
-            font-family: 'Raleway', sans-serif;
-            background: white;
         }
         .name-input:focus {
             border-color: #D9B48B;
@@ -262,9 +239,8 @@
         .preview-img {
             max-width: 100%;
             max-height: 200px;
-            border-radius: 24px;
+            border-radius: 20px;
             margin-top: 1rem;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
         }
         .progress-bar {
             width: 100%;
@@ -282,10 +258,8 @@
             background: #D9B48B;
             transition: width 0.2s;
         }
-        .upload-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+
+        /* Галерея */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -293,16 +267,13 @@
         }
         .gallery-item {
             position: relative;
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
             aspect-ratio: 1;
             cursor: pointer;
-            transition: 0.25s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .gallery-item:hover {
-            transform: scale(1.02);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #f0e6dc;
         }
         .gallery-item img {
             width: 100%;
@@ -314,32 +285,46 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(50, 30, 10, 0.6));
+            background: rgba(0,0,0,0.6);
             color: white;
-            padding: 0.5rem;
-            font-size: 0.7rem;
+            padding: 6px 8px;
+            font-size: 12px;
             text-align: center;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .gallery-item:hover .overlay {
-            opacity: 1;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
         }
         .empty-state {
             text-align: center;
             padding: 3rem;
             color: #CBB59A;
         }
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
+        .empty-icon { font-size: 4rem; opacity: 0.5; }
         .gallery-scroll {
             max-height: 60vh;
             overflow-y: auto;
             padding-right: 0.3rem;
         }
+
+        /* Спиннер загрузки */
+        .loader {
+            text-align: center;
+            padding: 2rem;
+            color: #D9B48B;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #F0DECC;
+            border-top-color: #D9B48B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Лайтбокс */
         .lightbox {
             display: none;
             position: fixed;
@@ -347,8 +332,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(30, 20, 15, 0.96);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.95);
             z-index: 2000;
             align-items: center;
             justify-content: center;
@@ -357,10 +341,9 @@
         .lightbox.active { display: flex; }
         .lightbox img {
             max-width: 90vw;
-            max-height: 80vh;
-            border-radius: 20px;
+            max-height: 70vh;
+            border-radius: 16px;
             object-fit: contain;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.4);
         }
         .lightbox-controls {
             position: absolute;
@@ -368,45 +351,104 @@
             left: 0;
             right: 0;
             display: flex;
-            gap: 1.2rem;
+            gap: 1rem;
             justify-content: center;
         }
         .lightbox-btn {
             background: rgba(255,240,225,0.2);
             border: 1px solid rgba(255,225,200,0.5);
             color: #FBEAD8;
-            padding: 0.6rem 1.4rem;
-            border-radius: 60px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
             cursor: pointer;
-            font-family: 'Raleway', sans-serif;
             font-weight: 500;
-            backdrop-filter: blur(8px);
         }
         .lightbox-btn:hover {
-            background: rgba(217,180,139,0.5);
-            color: white;
+            background: #D9B48B;
+            color: #3A2C1F;
         }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-nav:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
         .lightbox-close {
             position: absolute;
             top: 1rem;
-            right: 1.5rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,250,245,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.6rem 1rem;
+            border-top: 1px solid #EEDDCB;
+            z-index: 500;
+        }
+        .nav-btn {
             background: none;
             border: none;
-            color: #EEDDCB;
-            font-size: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+            color: #8B694C;
             cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
         }
+        .nav-btn span:first-child {
+            font-size: 1.4rem;
+        }
+        .nav-btn:hover {
+            color: #D9B48B;
+            transform: translateY(-2px);
+        }
+
         .toast {
             position: fixed;
-            bottom: 2rem;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: #4E3F30;
-            color: #FFF2E5;
-            padding: 0.7rem 1.5rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            transition: 0.3s;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            transition: 0.2s;
             z-index: 3000;
         }
         .toast.show {
@@ -414,23 +456,21 @@
         }
         .footer {
             text-align: center;
-            padding: 1.5rem;
+            padding: 1rem;
             font-size: 0.7rem;
             color: #CFB99F;
-            background: transparent;
-            position: relative;
-            z-index: 2;
         }
-        @media (max-width: 500px) {
+        @media (max-width: 550px) {
             .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-            .modal-body { padding: 1.2rem; }
+            .modal-body { padding: 1rem; }
+            .lightbox-nav { width: 36px; height: 36px; font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 <div class="petals" id="petalsContainer"></div>
 
-<div class="hero">
+<div class="hero" id="heroSection">
     <div class="hero-content">
         <div class="wedding-icon">🌸</div>
         <h1>Андрей <span>&</span> Ольга</h1>
@@ -454,11 +494,11 @@
         <div class="modal-header"><h2>📷 Поделиться кадром</h2></div>
         <div class="modal-body">
             <div id="uploadForm">
-                <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-area" id="dropZone">
                     <div class="upload-icon">🖼️</div>
                     <h3>Нажмите или перетащите фото</h3>
-                    <p>JPG, PNG, до 32 МБ</p>
-                    <input type="file" id="fileInput" accept="image/*" style="display:none">
+                    <p>JPG, PNG, WEBP, GIF до 32 МБ</p>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
                 </div>
                 <input type="text" class="name-input" id="guestName" placeholder="Как вас подписать? (например, Таня, Сергей)">
                 <div id="previewContainer"></div>
@@ -466,10 +506,10 @@
                 <button class="btn btn-primary upload-btn" id="uploadBtn" onclick="uploadPhoto()" disabled>Загрузить</button>
             </div>
             <div id="successMsg" style="display:none; text-align:center; padding:1rem 0">
-                <div style="font-size:3.5rem">✨</div>
-                <h3 style="font-family:'Playfair Display';">Спасибо!</h3>
+                <div style="font-size:3rem">✨</div>
+                <h3>Спасибо!</h3>
                 <p>Ваше фото уже в альбоме 🤍</p>
-                <button class="btn btn-secondary" style="margin-top:1rem" onclick="resetUpload()">➕ Загрузить ещё</button>
+                <button class="btn btn-secondary" onclick="resetUpload()">➕ Загрузить ещё</button>
             </div>
         </div>
     </div>
@@ -479,43 +519,58 @@
 <div class="modal-overlay" id="galleryModal">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('galleryModal')">✕</button>
-        <div class="modal-header"><h2>🌸 Общий альбом</h2><p>Фотографии от наших гостей</p></div>
+        <div class="modal-header"><h2>🌸 Общий альбом</h2><p>Фотографии гостей</p></div>
         <div class="modal-body">
             <div id="galleryContent">
-                <div class="empty-state" id="emptyState">
+                <div class="empty-state" id="emptyState" style="display:none">
                     <div class="empty-icon">📷</div>
                     <p>Пока нет загруженных фото</p>
-                    <p style="font-size:0.8rem">Станьте первыми!</p>
+                </div>
+                <div id="galleryLoader" class="loader" style="display:block">
+                    <div class="spinner"></div>
+                    <p>Загрузка фото...</p>
                 </div>
                 <div class="gallery-scroll" id="galleryScroll" style="display:none">
                     <div class="gallery-grid" id="galleryGrid"></div>
                 </div>
             </div>
-            <button class="btn btn-secondary" style="width:100%; margin-top:1.5rem" onclick="loadGallery()">⟳ Обновить альбом</button>
         </div>
     </div>
 </div>
 
-<!-- Лайтбокс с кнопкой скачать -->
+<!-- Лайтбокс -->
 <div class="lightbox" id="lightbox">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
     <img id="lightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
     <div class="lightbox-controls">
-        <button class="lightbox-btn" onclick="downloadCurrentPhoto()">💾 Скачать фото</button>
-        <button class="lightbox-btn" onclick="closeLightbox()">Закрыть</button>
+        <button class="lightbox-btn" onclick="downloadCurrentPhoto()">💾 Скачать</button>
+        <button class="lightbox-btn" id="deletePhotoBtn" onclick="deleteCurrentPhoto()">🗑 Удалить</button>
     </div>
+</div>
+
+<!-- Нижняя навигация -->
+<div class="bottom-nav">
+    <button class="nav-btn" onclick="scrollToHero()">
+        <span>🏠</span><span>Главная</span>
+    </button>
+    <button class="nav-btn" onclick="openUploadModal()">
+        <span>📸</span><span>Загрузить</span>
+    </button>
+    <button class="nav-btn" onclick="openGalleryModal()">
+        <span>🖼️</span><span>Альбом</span>
+    </button>
 </div>
 
 <div class="toast" id="toast"></div>
 <div class="footer">Сделано с любовью | Андрей & Ольга | 1 августа 2026</div>
 
 <script>
-    // ========== КЛЮЧИ И НАСТРОЙКИ (всё вставлено) ==========
-    // ImgBB
+    // ========== КЛЮЧИ ==========
     const IMGBB_API_KEY = '9432191b49fc4c02f1296699ca849975';
     const ALBUM_ID = 'RTbDyX';
 
-    // Firebase конфигурация (ваша, из консоли)
     const firebaseConfig = {
         apiKey: "AIzaSyD1VExlZZ6aizMe9jMZ_Pw7zo3ko4jhrmw",
         authDomain: "weddingalbum2026-654c9.firebaseapp.com",
@@ -526,15 +581,17 @@
         appId: "1:32362172364:web:422533879dfe3a95859769"
     };
 
-    // Инициализация Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const photosRef = database.ref('wedding_photos');
 
     // Глобальные переменные
     let selectedFile = null;
-    let currentPhotos = [];
+    let currentPhotos = [];      // массив фото для лайтбокса
+    let currentLightboxIndex = 0;
+    let galleryListener = null;   // слушатель Firebase
 
+    // Вспомогательные функции
     function showToast(msg) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
@@ -545,6 +602,11 @@
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
         document.body.style.overflow = '';
+        // Если закрыли галерею, отключаем слушатель
+        if (id === 'galleryModal' && galleryListener) {
+            photosRef.off('child_added', galleryListener);
+            galleryListener = null;
+        }
     }
 
     function openUploadModal() {
@@ -556,22 +618,54 @@
     function openGalleryModal() {
         document.getElementById('galleryModal').classList.add('active');
         document.body.style.overflow = 'hidden';
-        loadGallery();
+        loadGalleryRealTime();
     }
 
-    // Загрузка фото
+    function scrollToHero() {
+        document.getElementById('heroSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Валидация файла
+    function validateFile(file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            showToast('Можно загружать только изображения (JPG, PNG, WEBP, GIF)');
+            return false;
+        }
+        if (file.size > 32 * 1024 * 1024) {
+            showToast('Файл слишком большой. Максимум 32 МБ');
+            return false;
+        }
+        return true;
+    }
+
+    // Drag & Drop
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
+    dropZone.addEventListener('click', () => fileInput.click());
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#D9B48B'; });
     dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#F0DECC'; });
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.style.borderColor = '#F0DECC';
         const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) { selectedFile = file; showPreview(file); }
+        if (file && file.type.startsWith('image/')) {
+            if (validateFile(file)) {
+                selectedFile = file;
+                showPreview(file);
+            }
+        } else {
+            showToast('Пожалуйста, выберите изображение');
+        }
     });
     fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) { selectedFile = e.target.files[0]; showPreview(selectedFile); }
+        if (e.target.files.length) {
+            const file = e.target.files[0];
+            if (validateFile(file)) {
+                selectedFile = file;
+                showPreview(file);
+            }
+        }
     });
 
     function showPreview(file) {
@@ -593,7 +687,7 @@
         btn.disabled = true;
         btn.innerHTML = '⏳ Загрузка...';
         progress.classList.add('active');
-        fill.style.width = '40%';
+        fill.style.width = '30%';
 
         const formData = new FormData();
         formData.append('image', selectedFile);
@@ -601,17 +695,13 @@
         formData.append('album', ALBUM_ID);
 
         try {
-            // Шаг 1: загружаем фото на ImgBB
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
                 method: 'POST',
                 body: formData
             });
             const data = await response.json();
-
             if (data.success) {
                 fill.style.width = '70%';
-                
-                // Шаг 2: сохраняем ссылку в Firebase
                 const photoData = {
                     url: data.data.url,
                     thumb: data.data.thumb?.url || data.data.url,
@@ -619,9 +709,7 @@
                     timestamp: Date.now(),
                     date: new Date().toISOString()
                 };
-                
                 await photosRef.push(photoData);
-                
                 fill.style.width = '100%';
                 setTimeout(() => {
                     document.getElementById('uploadForm').style.display = 'none';
@@ -629,7 +717,7 @@
                 }, 300);
                 showToast('Фото добавлено в общий альбом!');
             } else {
-                throw new Error(data.error?.message || 'Ошибка загрузки в ImgBB');
+                throw new Error(data.error?.message || 'Ошибка ImgBB');
             }
         } catch (err) {
             showToast('Ошибка: ' + err.message);
@@ -652,38 +740,75 @@
         document.getElementById('successMsg').style.display = 'none';
     }
 
-    // Загрузка галереи из Firebase
-    async function loadGallery() {
-        const empty = document.getElementById('emptyState');
-        const scroll = document.getElementById('galleryScroll');
+    // === ГАЛЕРЕЯ С РЕАЛЬНЫМ ВРЕМЕНЕМ ===
+    async function loadGalleryRealTime() {
+        const emptyState = document.getElementById('emptyState');
+        const scrollDiv = document.getElementById('galleryScroll');
+        const loader = document.getElementById('galleryLoader');
         
-        empty.style.display = 'block';
-        scroll.style.display = 'none';
+        emptyState.style.display = 'none';
+        scrollDiv.style.display = 'none';
+        loader.style.display = 'block';
+        currentPhotos = [];
         
-        try {
-            const snapshot = await photosRef.once('value');
-            const photos = [];
-            
-            snapshot.forEach((childSnapshot) => {
-                const photo = childSnapshot.val();
-                photo.id = childSnapshot.key;
-                photos.push(photo);
-            });
-            
-            if (photos.length === 0) {
-                showEmptyGallery();
-                return;
-            }
-            
-            photos.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-            renderGallery(photos);
-            currentPhotos = photos;
-            
-        } catch (err) {
-            console.error(err);
-            showEmptyGallery();
-            showToast('Не удалось загрузить альбом из Firebase');
+        // Удаляем старый слушатель, если есть
+        if (galleryListener) {
+            photosRef.off('child_added', galleryListener);
         }
+        
+        // Сначала получим все существующие записи и проверим их валидность
+        const snapshot = await photosRef.once('value');
+        const initialPhotos = [];
+        const promises = [];
+        snapshot.forEach((child) => {
+            const photo = child.val();
+            photo.id = child.key;
+            // Проверяем, доступно ли изображение
+            promises.push(checkImageExists(photo.url).then(exists => {
+                if (exists) {
+                    initialPhotos.push(photo);
+                } else {
+                    // Удаляем запись, если изображение удалено на ImgBB
+                    photosRef.child(photo.id).remove().catch(console.error);
+                }
+            }));
+        });
+        await Promise.all(promises);
+        
+        initialPhotos.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+        currentPhotos = initialPhotos;
+        renderGallery(initialPhotos);
+        
+        loader.style.display = 'none';
+        if (initialPhotos.length === 0) {
+            emptyState.style.display = 'block';
+        } else {
+            scrollDiv.style.display = 'block';
+        }
+        
+        // Слушаем добавление новых фото
+        galleryListener = photosRef.on('child_added', (snap) => {
+            const newPhoto = snap.val();
+            newPhoto.id = snap.key;
+            // Проверяем, нет ли уже такого фото (на случай дублирования)
+            if (!currentPhotos.some(p => p.id === newPhoto.id)) {
+                currentPhotos.unshift(newPhoto); // добавляем в начало
+                renderGallery(currentPhotos);
+                if (document.getElementById('galleryModal').classList.contains('active')) {
+                    showToast('Новое фото добавлено!');
+                }
+            }
+        });
+    }
+
+    // Проверка существования изображения (чтобы удалить битые ссылки)
+    function checkImageExists(url) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = url;
+        });
     }
 
     function renderGallery(photos) {
@@ -691,8 +816,11 @@
         const empty = document.getElementById('emptyState');
         const scroll = document.getElementById('galleryScroll');
         
-        if (!photos.length) { showEmptyGallery(); return; }
-        
+        if (!photos.length) {
+            empty.style.display = 'block';
+            scroll.style.display = 'none';
+            return;
+        }
         empty.style.display = 'none';
         scroll.style.display = 'block';
         grid.innerHTML = '';
@@ -709,27 +837,27 @@
         });
     }
 
-    function showEmptyGallery() {
-        document.getElementById('emptyState').style.display = 'block';
-        document.getElementById('galleryScroll').style.display = 'none';
-        currentPhotos = [];
-    }
-
-    // Лайтбокс и скачивание
-    let currentLightboxIndex = 0;
     function openLightbox(index) {
         if (!currentPhotos.length) return;
         currentLightboxIndex = index;
         const photo = currentPhotos[index];
-        const fullUrl = photo.url;
-        document.getElementById('lightboxImg').src = fullUrl;
+        document.getElementById('lightboxImg').src = photo.url;
         document.getElementById('lightbox').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
+
     function closeLightbox() {
         document.getElementById('lightbox').classList.remove('active');
         document.body.style.overflow = '';
     }
+
+    function navigateLightbox(direction) {
+        if (!currentPhotos.length) return;
+        currentLightboxIndex = (currentLightboxIndex + direction + currentPhotos.length) % currentPhotos.length;
+        const photo = currentPhotos[currentLightboxIndex];
+        document.getElementById('lightboxImg').src = photo.url;
+    }
+
     function downloadCurrentPhoto() {
         const img = document.getElementById('lightboxImg');
         const link = document.createElement('a');
@@ -741,15 +869,41 @@
         showToast('Скачивание начато');
     }
 
+    async function deleteCurrentPhoto() {
+        if (!currentPhotos.length) return;
+        const photo = currentPhotos[currentLightboxIndex];
+        if (!confirm('Удалить это фото из альбома? Это действие необратимо.')) return;
+        
+        try {
+            // Удаляем запись из Firebase
+            await photosRef.child(photo.id).remove();
+            // Удаляем фото из текущего массива и перерисовываем
+            currentPhotos.splice(currentLightboxIndex, 1);
+            renderGallery(currentPhotos);
+            closeLightbox();
+            showToast('Фото удалено из альбома');
+            // Если галерея открыта, обновим её вид
+            if (document.getElementById('galleryModal').classList.contains('active')) {
+                // Просто перерисовка уже сделана
+            }
+        } catch (err) {
+            showToast('Ошибка удаления: ' + err.message);
+        }
+    }
+
+    // Обработка клавиш
     document.addEventListener('keydown', (e) => {
-        if (document.getElementById('lightbox').classList.contains('active') && e.key === 'Escape') closeLightbox();
+        if (document.getElementById('lightbox').classList.contains('active')) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        }
         if (e.key === 'Escape') {
-            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-            document.body.style.overflow = '';
+            document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
         }
     });
 
-    function escapeHtml(str) { 
+    function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m));
     }
@@ -757,14 +911,14 @@
     // Лепестки
     function createPetals() {
         const container = document.getElementById('petalsContainer');
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 20; i++) {
             const petal = document.createElement('div');
             petal.className = 'petal';
-            const size = 10 + Math.random() * 18;
+            const size = 8 + Math.random() * 20;
             petal.style.width = size + 'px';
             petal.style.height = size + 'px';
             petal.style.left = Math.random() * 100 + '%';
-            petal.style.animationDuration = 6 + Math.random() * 12 + 's';
+            petal.style.animationDuration = 6 + Math.random() * 14 + 's';
             petal.style.animationDelay = Math.random() * 15 + 's';
             petal.style.opacity = 0.2 + Math.random() * 0.4;
             petal.style.background = '#F3D1BC';
