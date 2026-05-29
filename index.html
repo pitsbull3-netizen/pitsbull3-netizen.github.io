@@ -671,11 +671,12 @@
 
             const formData = new FormData();
             formData.append('image', file);
-            // Можно передать имя альбома, но он уже задан через авторизацию пользователя
-            // Альбом будет выбран по умолчанию как последний использованный или общий.
+            // КЛЮЧЕВОЙ МОМЕНТ: указываем ID вашего альбома
+            formData.append('album', ALBUM_ID);
+            formData.append('name', guestName); // Можно также передать имя файла
 
             try {
-                const response = await fetch(`${API_URL}`, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
@@ -683,7 +684,8 @@
                     body: formData
                 });
                 const data = await response.json();
-                if (data.success && data.data && data.data.length > 0) {
+                // Проверяем ответ сервера. Документация ImageBan говорит, что в случае успеха success === true
+                if (data && data.success === true && data.data && data.data.length > 0) {
                     const imgInfo = data.data[0];
                     // Сохраняем delete_hash для возможности удаления (только на этом устройстве)
                     if (imgInfo.delete_hash) {
@@ -691,10 +693,12 @@
                     }
                     successCount++;
                 } else {
-                    throw new Error(data.message || 'Ошибка загрузки на ImageBan');
+                    // Выводим более информативное сообщение об ошибке
+                    const errorMsg = data.message || data.error || 'Неизвестная ошибка API';
+                    throw new Error(errorMsg);
                 }
             } catch (err) {
-                console.error(err);
+                console.error('Ошибка загрузки:', err);
                 showToast(`Ошибка при загрузке ${file.name}: ${err.message}`);
             }
         }
@@ -749,9 +753,9 @@
                 }
             });
             const data = await response.json();
-            if (data.success && data.data && data.data.images) {
+            if (data && data.success === true && data.data && data.data.image) {
                 // images — массив объектов с полями: id, link, thumb, title, date
-                const images = data.data.images;
+                const images = data.data.image;
                 currentPhotos = images.map(img => ({
                     url: img.link,
                     thumb: img.thumb || img.link,
@@ -760,7 +764,7 @@
                     id: img.id
                 }));
                 // Сортируем по убыванию даты (новые сверху)
-                currentPhotos.sort((a,b) => (b.date || 0) - (a.date || 0));
+                currentPhotos.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
                 renderGallery(currentPhotos);
             } else {
                 console.warn('Нет фото или ошибка API', data);
