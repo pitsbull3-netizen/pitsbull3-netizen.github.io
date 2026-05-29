@@ -534,32 +534,13 @@
 <script>
     // ========== ВАШИ ДАННЫЕ ДЛЯ IMAGEBAN ==========
     const IMAGEBAN_SECRET_KEY = 'W17NJt0mUNi1BNs6O78HwQEQvIEZT8yxM0n';
-    const ALBUM_ID = 'my4n9zV';
     const API_URL = 'https://api.imageban.ru/v1';
-    const ADMIN_PASSWORD = '07102024';   // пароль для удаления фото
-
-    // Хранилище delete_hash для загруженных фото (на этом устройстве)
-    let deleteHashes = {};
+    const ADMIN_PASSWORD = '07102024';
 
     // Глобальные переменные
     let selectedFiles = [];
-    let currentPhotos = [];      // массив объектов { url, thumb, name?, timestamp?, id? } из API
+    let currentPhotos = [];      // массив объектов { url, thumb, name?, id? }
     let currentLightboxIndex = 0;
-
-    // Загрузка сохранённых delete_hash из localStorage
-    function loadDeleteHashes() {
-        const stored = localStorage.getItem('imageban_delete_hashes');
-        if (stored) {
-            try {
-                deleteHashes = JSON.parse(stored);
-            } catch(e) {}
-        }
-    }
-    function saveDeleteHash(url, hash) {
-        deleteHashes[url] = hash;
-        localStorage.setItem('imageban_delete_hashes', JSON.stringify(deleteHashes));
-    }
-    loadDeleteHashes();
 
     function showToast(msg) {
         const toast = document.getElementById('toast');
@@ -582,7 +563,7 @@
     async function openGalleryModal() {
         document.getElementById('galleryModal').classList.add('active');
         document.body.style.overflow = 'hidden';
-        await loadAlbumPhotos();
+        await loadMyPhotos();
     }
 
     function scrollToHero() {
@@ -649,7 +630,7 @@
         document.getElementById('uploadBtn').disabled = false;
     }
 
-    // ЗАГРУЗКА ФОТО В АЛЬБОМ
+    // --- ЗАГРУЗКА ФОТО (не указываем альбом, загружаем в корень) ---
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -671,9 +652,8 @@
 
             const formData = new FormData();
             formData.append('image', file);
-            // КЛЮЧЕВОЙ МОМЕНТ: указываем ID вашего альбома
-            formData.append('album', ALBUM_ID);
-            formData.append('name', guestName); // Можно также передать имя файла
+            // ВАЖНО: не передаём album, загружаем в корень аккаунта
+            formData.append('name', guestName);
 
             try {
                 const response = await fetch(API_URL, {
@@ -684,22 +664,16 @@
                     body: formData
                 });
                 const data = await response.json();
-                // Проверяем ответ сервера. Документация ImageBan говорит, что в случае успеха success === true
                 if (data && data.success === true && data.data && data.data.length > 0) {
-                    const imgInfo = data.data[0];
-                    // Сохраняем delete_hash для возможности удаления (только на этом устройстве)
-                    if (imgInfo.delete_hash) {
-                        saveDeleteHash(imgInfo.link, imgInfo.delete_hash);
-                    }
                     successCount++;
                 } else {
-                    // Выводим более информативное сообщение об ошибке
                     const errorMsg = data.message || data.error || 'Неизвестная ошибка API';
                     throw new Error(errorMsg);
                 }
             } catch (err) {
                 console.error('Ошибка загрузки:', err);
                 showToast(`Ошибка при загрузке ${file.name}: ${err.message}`);
+                // Увеличиваем счётчик неудачных? Нет, просто логируем
             }
         }
         fill.style.width = '100%';
@@ -712,7 +686,7 @@
             showToast(`✅ Загружено ${successCount} фото!`);
             // Обновляем галерею, если она открыта
             if (document.getElementById('galleryModal').classList.contains('active')) {
-                await loadAlbumPhotos();
+                await loadMyPhotos();
             }
         } else {
             showToast(`Загружено ${successCount} из ${selectedFiles.length}. Попробуйте ещё раз.`);
@@ -736,8 +710,8 @@
         document.getElementById('successMsg').style.display = 'none';
     }
 
-    // ПОЛУЧЕНИЕ СПИСКА ФОТО ИЗ АЛЬБОМА
-    async function loadAlbumPhotos() {
+    // --- ПОЛУЧЕНИЕ ВСЕХ ФОТО ИЗ КОРНЯ АККАУНТА ---
+    async function loadMyPhotos() {
         const emptyState = document.getElementById('emptyState');
         const scrollDiv = document.getElementById('galleryScroll');
         const loader = document.getElementById('galleryLoader');
@@ -747,24 +721,23 @@
         currentPhotos = [];
 
         try {
-            const response = await fetch(`${API_URL}/album/${ALBUM_ID}`, {
+            // Получаем все фото из корня аккаунта (пагинация 1-я страница, 500 элементов)
+            const response = await fetch(`${API_URL}/image/my/1/500`, {
                 headers: {
                     'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
                 }
             });
             const data = await response.json();
-            if (data && data.success === true && data.data && data.data.image) {
-                // images — массив объектов с полями: id, link, thumb, title, date
-                const images = data.data.image;
-                currentPhotos = images.map(img => ({
+            if (data && data.images && Array.isArray(data.images)) {
+                currentPhotos = data.images.map(img => ({
                     url: img.link,
-                    thumb: img.thumb || img.link,
-                    name: img.title || 'Гость',
-                    date: img.date ? new Date(img.date * 1000).toLocaleString() : '',
-                    id: img.id
+                    thumb: img.url_thumb || img.link,
+                    name: img.img_name || img.name || 'Гость',
+                    id: img.id,
+                    date: img.date
                 }));
                 // Сортируем по убыванию даты (новые сверху)
-                currentPhotos.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+                currentPhotos.sort((a, b) => (b.date || 0).localeCompare(a.date || 0));
                 renderGallery(currentPhotos);
             } else {
                 console.warn('Нет фото или ошибка API', data);
@@ -772,8 +745,8 @@
                 renderGallery(currentPhotos);
             }
         } catch (err) {
-            console.error('Ошибка загрузки альбома:', err);
-            showToast('Не удалось загрузить альбом. Попробуйте позже.');
+            console.error('Ошибка загрузки фото:', err);
+            showToast('Не удалось загрузить фото. Попробуйте позже.');
         }
         loader.style.display = 'none';
         if (currentPhotos.length === 0) {
@@ -798,10 +771,9 @@
         photos.forEach((photo, idx) => {
             const thumb = photo.thumb || photo.url;
             const name = photo.name || 'Гость';
-            const date = photo.date || '';
             const div = document.createElement('div');
             div.className = 'gallery-item';
-            div.innerHTML = `<img src="${thumb}" loading="lazy" alt="wedding"><div class="overlay">${escapeHtml(name)}<br>${date}</div>`;
+            div.innerHTML = `<img src="${thumb}" loading="lazy" alt="wedding"><div class="overlay">${escapeHtml(name)}</div>`;
             div.onclick = () => openLightbox(idx);
             grid.appendChild(div);
         });
@@ -839,7 +811,7 @@
         showToast('Скачивание начато');
     }
 
-    // УДАЛЕНИЕ ФОТО (только если delete_hash сохранён в localStorage)
+    // --- УДАЛЕНИЕ ФОТО (с использованием авторизованного метода) ---
     async function promptDeleteCurrentPhoto() {
         if (!currentPhotos.length) return;
         const password = prompt('Введите пароль администратора:');
@@ -848,14 +820,9 @@
             return;
         }
         const photo = currentPhotos[currentLightboxIndex];
-        const deleteHash = deleteHashes[photo.url];
-        if (!deleteHash) {
-            showToast('❌ Невозможно удалить это фото с текущего устройства. Удалите его вручную через аккаунт ImageBan.');
-            return;
-        }
-        if (!confirm('Вы уверены, что хотите удалить это фото из альбома?')) return;
+        if (!confirm(`Вы уверены, что хотите удалить фото "${photo.name || 'без названия'}"?`)) return;
         try {
-            const response = await fetch(`${API_URL}/delete/${deleteHash}`, {
+            const response = await fetch(`${API_URL}/image/delete/${photo.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
@@ -867,10 +834,7 @@
                 currentPhotos.splice(currentLightboxIndex, 1);
                 renderGallery(currentPhotos);
                 closeLightbox();
-                showToast('Фото удалено из альбома');
-                // Также удаляем delete_hash из хранилища
-                delete deleteHashes[photo.url];
-                localStorage.setItem('imageban_delete_hashes', JSON.stringify(deleteHashes));
+                showToast('Фото удалено');
                 if (currentPhotos.length === 0 && document.getElementById('galleryModal').classList.contains('active')) {
                     document.getElementById('emptyState').style.display = 'block';
                     document.getElementById('galleryScroll').style.display = 'none';
