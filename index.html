@@ -533,7 +533,8 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbz6F73jOgT0RykluT1clHinqvKF-eNGFF6reXKz8SguC6D1Wj9ntIVr5gEb_PKc_WXx/exec';
+    // НОВЫЙ URL ВАШЕГО ПРОКСИ С ПОДДЕРЖКОЙ CORS
+    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbznX5QL6sznbWJSM-IL5_Rg_AnpQk1Ysr4QkzsreKAtRsjuUjYGlvTldrdLXcWg5ZKX/exec';
     const ALBUM_ID = 'my4n9zV';
     
     let selectedFiles = [];
@@ -720,8 +721,7 @@
             const data = await response.json();
             console.log('Album data:', data);
             
-            // Ожидаемая структура ответа от ImageBan через прокси:
-            // { success: true, data: { image: [ { id, link, url_thumb, img_name, date }, ... ] } }
+            // Ожидаемая структура от ImageBan
             if (data && data.success === true && data.data && data.data.image && Array.isArray(data.data.image)) {
                 const images = data.data.image;
                 console.log(`Найдено фото: ${images.length}`);
