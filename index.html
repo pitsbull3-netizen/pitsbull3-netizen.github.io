@@ -245,139 +245,26 @@
             color: #B68B6E;
             text-align: center;
         }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-        .gallery-item {
-            position: relative;
-            border-radius: 20px;
+        .iframe-container {
+            width: 100%;
+            height: 70vh;
+            border-radius: 24px;
             overflow: hidden;
-            aspect-ratio: 1;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            background: #f0e6dc;
+            border: 1px solid #EEDDCB;
         }
-        .gallery-item img {
+        iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-        .gallery-item .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 6px 8px;
-            font-size: 12px;
-            text-align: center;
-            font-weight: 500;
-            backdrop-filter: blur(4px);
+            border: none;
         }
         .empty-state {
             text-align: center;
             padding: 3rem;
             color: #CBB59A;
         }
-        .empty-icon { font-size: 4rem; opacity: 0.5; }
         .gallery-scroll {
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 0.3rem;
-        }
-        .loader {
-            text-align: center;
-            padding: 2rem;
-            color: #D9B48B;
-        }
-        .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 3px solid #F0DECC;
-            border-top-color: #D9B48B;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .lightbox.active { display: flex; }
-        .lightbox img {
-            max-width: 90vw;
             max-height: 70vh;
-            border-radius: 16px;
-            object-fit: contain;
-        }
-        .lightbox-controls {
-            position: absolute;
-            bottom: 2rem;
-            left: 0;
-            right: 0;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .lightbox-btn {
-            background: rgba(255,240,225,0.2);
-            border: 1px solid rgba(255,225,200,0.5);
-            color: #FBEAD8;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .lightbox-btn:hover {
-            background: #D9B48B;
-            color: #3A2C1F;
-        }
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            font-size: 2rem;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .lightbox-nav:hover { background: rgba(0,0,0,0.8); }
-        .lightbox-prev { left: 1rem; }
-        .lightbox-next { right: 1rem; }
-        .lightbox-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(0,0,0,0.6);
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            overflow-y: auto;
         }
         .bottom-nav {
             position: fixed;
@@ -431,9 +318,8 @@
             color: #CFB99F;
         }
         @media (max-width: 550px) {
-            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
             .modal-body { padding: 1rem; }
-            .lightbox-nav { width: 36px; height: 36px; font-size: 1.5rem; }
+            .iframe-container { height: 60vh; }
         }
     </style>
 </head>
@@ -457,7 +343,7 @@
     </div>
 </div>
 
-<!-- Модалка загрузки -->
+<!-- Модалка загрузки (работает через API) -->
 <div class="modal-overlay" id="uploadModal">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('uploadModal')">✕</button>
@@ -486,38 +372,16 @@
     </div>
 </div>
 
-<!-- Модалка галереи -->
+<!-- Модалка галереи: просто iframe с альбомом -->
 <div class="modal-overlay" id="galleryModal">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('galleryModal')">✕</button>
         <div class="modal-header"><h2>🌸 Общий альбом</h2><p>Фотографии гостей</p></div>
         <div class="modal-body">
-            <div id="galleryContent">
-                <div class="empty-state" id="emptyState" style="display:none">
-                    <div class="empty-icon">📷</div>
-                    <p>Пока нет загруженных фото</p>
-                </div>
-                <div id="galleryLoader" class="loader" style="display:block">
-                    <div class="spinner"></div>
-                    <p>Загрузка фото...</p>
-                </div>
-                <div class="gallery-scroll" id="galleryScroll" style="display:none">
-                    <div class="gallery-grid" id="galleryGrid"></div>
-                </div>
+            <div class="iframe-container">
+                <iframe src="https://imageban.ru/a/my4n9zV" title="Свадебный альбом"></iframe>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Лайтбокс -->
-<div class="lightbox" id="lightbox">
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
-    <img id="lightboxImg" src="" alt="">
-    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
-    <div class="lightbox-controls">
-        <button class="lightbox-btn" onclick="downloadCurrentPhoto()">💾 Скачать</button>
-        <button class="lightbox-btn" id="deletePhotoBtn" onclick="promptDeleteCurrentPhoto()">🗑 Удалить</button>
     </div>
 </div>
 
@@ -532,21 +396,13 @@
 <div class="footer">Сделано с любовью | Андрей & Ольга | 1 августа 2026</div>
 
 <script>
-    // ========== ВАШИ ДАННЫЕ ДЛЯ IMAGEBAN ==========
+    // ========== ДАННЫЕ ДЛЯ IMAGEBAN (загрузка) ==========
     const IMAGEBAN_SECRET_KEY = 'W17NJt0mUNi1BNs6O78HwQEQvIEZT8yxM0n';
     const ALBUM_ID = 'my4n9zV';
     const API_URL = 'https://api.imageban.ru/v1';
     const ADMIN_PASSWORD = '07102024';
-    
-    // Публичный CORS-прокси (обход ограничений браузера)
-    // Для первого использования может потребоваться перейти по ссылке и нажать "Request temporary access"
-    // https://cors-anywhere.herokuapp.com/corsdemo
-    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
-    // Глобальные переменные
     let selectedFiles = [];
-    let currentPhotos = [];
-    let currentLightboxIndex = 0;
 
     function showToast(msg) {
         const toast = document.getElementById('toast');
@@ -566,10 +422,9 @@
         document.body.style.overflow = 'hidden';
     }
 
-    async function openGalleryModal() {
+    function openGalleryModal() {
         document.getElementById('galleryModal').classList.add('active');
         document.body.style.overflow = 'hidden';
-        await loadAlbumPhotos();
     }
 
     function scrollToHero() {
@@ -589,7 +444,6 @@
         return true;
     }
 
-    // Drag & Drop
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     dropZone.addEventListener('click', () => fileInput.click());
@@ -636,7 +490,6 @@
         document.getElementById('uploadBtn').disabled = false;
     }
 
-    // --- ЗАГРУЗКА ФОТО В АЛЬБОМ (через прокси, т.к. CORS мешает и при загрузке) ---
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -662,9 +515,7 @@
             formData.append('name', guestName);
 
             try {
-                // Используем прокси для POST-запроса
-                const proxyUrl = CORS_PROXY + API_URL;
-                const response = await fetch(proxyUrl, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
@@ -675,12 +526,11 @@
                 if (data && data.success === true && data.data && data.data.length > 0) {
                     successCount++;
                 } else {
-                    const errorMsg = data.message || data.error || 'Неизвестная ошибка API';
-                    throw new Error(errorMsg);
+                    throw new Error(data.message || 'Ошибка API');
                 }
             } catch (err) {
-                console.error('Ошибка загрузки:', err);
-                showToast(`Ошибка при загрузке ${file.name}: ${err.message}`);
+                console.error(err);
+                showToast(`Ошибка: ${err.message}`);
             }
         }
         fill.style.width = '100%';
@@ -691,9 +541,6 @@
                 document.getElementById('successMsg').style.display = 'block';
             }, 500);
             showToast(`✅ Загружено ${successCount} фото!`);
-            if (document.getElementById('galleryModal').classList.contains('active')) {
-                await loadAlbumPhotos();
-            }
         } else {
             showToast(`Загружено ${successCount} из ${selectedFiles.length}. Попробуйте ещё раз.`);
             btn.disabled = false;
@@ -716,183 +563,11 @@
         document.getElementById('successMsg').style.display = 'none';
     }
 
-    // --- ПОЛУЧЕНИЕ ФОТО ИЗ АЛЬБОМА (через CORS-прокси) ---
-    async function loadAlbumPhotos() {
-        const emptyState = document.getElementById('emptyState');
-        const scrollDiv = document.getElementById('galleryScroll');
-        const loader = document.getElementById('galleryLoader');
-        
-        emptyState.style.display = 'none';
-        scrollDiv.style.display = 'none';
-        loader.style.display = 'block';
-        currentPhotos = [];
-
-        try {
-            // Используем прокси для GET-запроса
-            const targetUrl = `${API_URL}/album/${ALBUM_ID}`;
-            const proxyUrl = CORS_PROXY + targetUrl;
-            console.log('Запрос через прокси:', proxyUrl);
-            
-            const response = await fetch(proxyUrl, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка сети: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Полный ответ от сервера:', result);
-
-            // Правильная структура: result.success, result.data.image
-            if (result.success && result.data && Array.isArray(result.data.image)) {
-                const images = result.data.image;
-                console.log(`Найдено фото в альбоме: ${images.length}`);
-
-                currentPhotos = images.map(img => ({
-                    id: img.id,
-                    url: img.link,
-                    thumb: img.url_thumb || img.link,
-                    name: img.img_name || 'Гость',
-                    date: img.date
-                }));
-
-                currentPhotos.sort((a, b) => {
-                    if (!a.date) return 1;
-                    if (!b.date) return -1;
-                    return b.date.localeCompare(a.date);
-                });
-
-                renderGallery(currentPhotos);
-            } else {
-                console.warn('Альбом пуст или структура ответа странная', result);
-                if (result.data && result.data.image_count === 0) {
-                    emptyState.style.display = 'block';
-                } else {
-                    showToast('Нет фото или ошибка доступа');
-                }
-            }
-        } catch (err) {
-            console.error('КРИТИЧЕСКАЯ ОШИБКА:', err);
-            showToast('Не удалось загрузить альбом. Возможно, требуется разрешить CORS-прокси. Откройте ссылку: https://cors-anywhere.herokuapp.com/corsdemo');
-        } finally {
-            loader.style.display = 'none';
-            if (currentPhotos.length > 0) {
-                scrollDiv.style.display = 'block';
-            }
-        }
-    }
-
-    function renderGallery(photos) {
-        const grid = document.getElementById('galleryGrid');
-        const empty = document.getElementById('emptyState');
-        const scroll = document.getElementById('galleryScroll');
-        if (!photos.length) {
-            empty.style.display = 'block';
-            scroll.style.display = 'none';
-            return;
-        }
-        empty.style.display = 'none';
-        scroll.style.display = 'block';
-        grid.innerHTML = '';
-        photos.forEach((photo, idx) => {
-            const thumb = photo.thumb || photo.url;
-            const name = photo.name || 'Гость';
-            const div = document.createElement('div');
-            div.className = 'gallery-item';
-            div.innerHTML = `<img src="${thumb}" loading="lazy" alt="wedding"><div class="overlay">${escapeHtml(name)}</div>`;
-            div.onclick = () => openLightbox(idx);
-            grid.appendChild(div);
-        });
-    }
-
-    function openLightbox(index) {
-        if (!currentPhotos.length) return;
-        currentLightboxIndex = index;
-        const photo = currentPhotos[index];
-        document.getElementById('lightboxImg').src = photo.url;
-        document.getElementById('lightbox').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    function navigateLightbox(direction) {
-        if (!currentPhotos.length) return;
-        currentLightboxIndex = (currentLightboxIndex + direction + currentPhotos.length) % currentPhotos.length;
-        const photo = currentPhotos[currentLightboxIndex];
-        document.getElementById('lightboxImg').src = photo.url;
-    }
-
-    function downloadCurrentPhoto() {
-        const img = document.getElementById('lightboxImg');
-        const link = document.createElement('a');
-        link.href = img.src;
-        link.download = `wedding_photo_${Date.now()}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('Скачивание начато');
-    }
-
-    // --- УДАЛЕНИЕ ФОТО (по ID, через прокси) ---
-    async function promptDeleteCurrentPhoto() {
-        if (!currentPhotos.length) return;
-        const password = prompt('Введите пароль администратора:');
-        if (password !== ADMIN_PASSWORD) {
-            showToast('Неверный пароль. Удаление отменено.');
-            return;
-        }
-        const photo = currentPhotos[currentLightboxIndex];
-        if (!confirm(`Вы уверены, что хотите удалить фото "${photo.name || 'без названия'}"?`)) return;
-        try {
-            const targetUrl = `${API_URL}/image/delete/${photo.id}`;
-            const proxyUrl = CORS_PROXY + targetUrl;
-            const response = await fetch(proxyUrl, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${IMAGEBAN_SECRET_KEY}`
-                }
-            });
-            const data = await response.json();
-            if (data.success) {
-                currentPhotos.splice(currentLightboxIndex, 1);
-                renderGallery(currentPhotos);
-                closeLightbox();
-                showToast('Фото удалено');
-                if (currentPhotos.length === 0 && document.getElementById('galleryModal').classList.contains('active')) {
-                    document.getElementById('emptyState').style.display = 'block';
-                    document.getElementById('galleryScroll').style.display = 'none';
-                }
-            } else {
-                throw new Error(data.message || 'Ошибка удаления');
-            }
-        } catch (err) {
-            showToast('Ошибка удаления: ' + err.message);
-        }
-    }
-
     document.addEventListener('keydown', (e) => {
-        if (document.getElementById('lightbox').classList.contains('active')) {
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') navigateLightbox(-1);
-            if (e.key === 'ArrowRight') navigateLightbox(1);
-        }
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
         }
     });
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, (m) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m));
-    }
 
     function createPetals() {
         const container = document.getElementById('petalsContainer');
@@ -911,11 +586,6 @@
         }
     }
     createPetals();
-
-    // Небольшое уведомление для первого запуска
-    setTimeout(() => {
-        console.log('Для работы CORS-прокси может потребоваться перейти по ссылке: https://cors-anywhere.herokuapp.com/corsdemo и нажать "Request temporary access"');
-    }, 1000);
 </script>
 </body>
 </html>
