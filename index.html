@@ -533,8 +533,8 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // ⚠️ ЗАМЕНИТЕ ЭТУ СТРОКУ НА АДРЕС ВАШЕГО API-ШЛЮЗА (Скопируйте из консоли Yandex Cloud)
-    const GATEWAY_URL = 'https://d5d6e5jndds7kb82anqf.nkhmighe.apigw.yandexcloud.net';
+    // URL вашей Cloud Function в Yandex Cloud
+    const GATEWAY_URL = 'https://functions.yandexcloud.net/d4eem211dupvsai4e8eu';
     const ALBUM_ID = 'my4n9zV';
     
     let selectedFiles = [];
@@ -653,7 +653,7 @@
             formData.append('name', guestName);
             
             try {
-                const response = await fetch(`${GATEWAY_URL}/upload`, {
+                const response = await fetch(GATEWAY_URL, {
                     method: 'POST',
                     body: formData
                 });
@@ -713,7 +713,7 @@
         currentPhotos = [];
         
         try {
-            const url = `${GATEWAY_URL}/album?album=${ALBUM_ID}`;
+            const url = `${GATEWAY_URL}?album=${ALBUM_ID}`;
             console.log('Fetching album from gateway:', url);
             const response = await fetch(url);
             const data = await response.json();
