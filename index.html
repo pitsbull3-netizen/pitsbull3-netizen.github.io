@@ -533,8 +533,8 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // НОВЫЙ URL ВАШЕГО ПРОКСИ С ПОДДЕРЖКОЙ CORS
-    const PROXY_URL = 'https://script.google.com/macros/s/AKfycbznX5QL6sznbWJSM-IL5_Rg_AnpQk1Ysr4QkzsreKAtRsjuUjYGlvTldrdLXcWg5ZKX/exec';
+    // ⚠️ ЗАМЕНИТЕ ЭТУ СТРОКУ НА АДРЕС ВАШЕГО API-ШЛЮЗА (Скопируйте из консоли Yandex Cloud)
+    const GATEWAY_URL = 'https://d5d6e5jndds7kb82anqf.nkhmighe.apigw.yandexcloud.net';
     const ALBUM_ID = 'my4n9zV';
     
     let selectedFiles = [];
@@ -628,7 +628,6 @@
         document.getElementById('uploadBtn').disabled = false;
     }
     
-    // === ЗАГРУЗКА ФОТО ===
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -654,7 +653,7 @@
             formData.append('name', guestName);
             
             try {
-                const response = await fetch(PROXY_URL, {
+                const response = await fetch(`${GATEWAY_URL}/upload`, {
                     method: 'POST',
                     body: formData
                 });
@@ -703,7 +702,6 @@
         document.getElementById('successMsg').style.display = 'none';
     }
     
-    // === ПОЛУЧЕНИЕ СПИСКА ФОТО ===
     async function loadAlbumPhotos() {
         const emptyState = document.getElementById('emptyState');
         const scrollDiv = document.getElementById('galleryScroll');
@@ -715,16 +713,14 @@
         currentPhotos = [];
         
         try {
-            const url = `${PROXY_URL}?album=${ALBUM_ID}`;
-            console.log('Fetching album from proxy:', url);
+            const url = `${GATEWAY_URL}/album?album=${ALBUM_ID}`;
+            console.log('Fetching album from gateway:', url);
             const response = await fetch(url);
             const data = await response.json();
             console.log('Album data:', data);
             
-            // Ожидаемая структура от ImageBan
             if (data && data.success === true && data.data && data.data.image && Array.isArray(data.data.image)) {
                 const images = data.data.image;
-                console.log(`Найдено фото: ${images.length}`);
                 currentPhotos = images.map(img => ({
                     id: img.id,
                     url: img.link,
@@ -732,7 +728,6 @@
                     name: img.img_name || 'Гость',
                     date: img.date
                 }));
-                // Сортировка по дате (новые сверху)
                 currentPhotos.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
                 renderGallery(currentPhotos);
             } else {
