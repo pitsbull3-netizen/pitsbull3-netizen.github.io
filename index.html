@@ -517,7 +517,7 @@
     <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
     <div class="lightbox-controls">
         <button class="lightbox-btn" onclick="downloadCurrentPhoto()">💾 Скачать</button>
-        <button class="lightbox-btn" id="deletePhotoBtn" onclick="promptDeleteCurrentPhoto()">🗑 Удалить</button>
+        <button class="lightbox-btn" onclick="promptDeleteCurrentPhoto()">🗑 Удалить</button>
     </div>
 </div>
 
@@ -533,8 +533,8 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // URL вашей Cloud Function в Yandex Cloud
-    const GATEWAY_URL = 'https://functions.yandexcloud.net/d4eem211dupvsai4e8eu';
+    // Адрес вашего прокси на Beget
+    const GATEWAY_URL = 'http://conque0s.beget.tech/proxy.php';
     const ALBUM_ID = 'my4n9zV';
     
     let selectedFiles = [];
@@ -628,6 +628,7 @@
         document.getElementById('uploadBtn').disabled = false;
     }
     
+    // === ЗАГРУЗКА ФОТО через прокси ===
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -702,6 +703,7 @@
         document.getElementById('successMsg').style.display = 'none';
     }
     
+    // === ПОЛУЧЕНИЕ СПИСКА ФОТО через прокси ===
     async function loadAlbumPhotos() {
         const emptyState = document.getElementById('emptyState');
         const scrollDiv = document.getElementById('galleryScroll');
@@ -714,7 +716,7 @@
         
         try {
             const url = `${GATEWAY_URL}?album=${ALBUM_ID}`;
-            console.log('Fetching album from gateway:', url);
+            console.log('Fetching album from proxy:', url);
             const response = await fetch(url);
             const data = await response.json();
             console.log('Album data:', data);
@@ -724,7 +726,7 @@
                 currentPhotos = images.map(img => ({
                     id: img.id,
                     url: img.link,
-                    thumb: img.url_thumb || img.link,
+                    thumb: img.link, // можно использовать img.url_thumb если есть, но link тоже подойдёт
                     name: img.img_name || 'Гость',
                     date: img.date
                 }));
@@ -762,8 +764,8 @@
         scroll.style.display = 'block';
         grid.innerHTML = '';
         photos.forEach((photo, idx) => {
-            const thumb = photo.thumb || photo.url;
-            const name = photo.name || 'Гость';
+            const thumb = photo.thumb;
+            const name = photo.name;
             const div = document.createElement('div');
             div.className = 'gallery-item';
             div.innerHTML = `<img src="${thumb}" loading="lazy" alt="wedding"><div class="overlay">${escapeHtml(name)}</div>`;
