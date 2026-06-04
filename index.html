@@ -6,6 +6,7 @@
     <title>Андрей & Ольга — Свадебный альбом</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* Все ваши стили (оставьте без изменений) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Raleway', sans-serif;
@@ -533,8 +534,8 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // Адрес вашего прокси на Beget
-    const GATEWAY_URL = 'http://conque0s.beget.tech/proxy.php';
+    // Ваш прокси на Beget через домен с HTTPS
+    const GATEWAY_URL = 'https://event-album.ru/proxy.php';
     const ALBUM_ID = 'my4n9zV';
     
     let selectedFiles = [];
@@ -628,7 +629,6 @@
         document.getElementById('uploadBtn').disabled = false;
     }
     
-    // === ЗАГРУЗКА ФОТО через прокси ===
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -703,7 +703,6 @@
         document.getElementById('successMsg').style.display = 'none';
     }
     
-    // === ПОЛУЧЕНИЕ СПИСКА ФОТО через прокси ===
     async function loadAlbumPhotos() {
         const emptyState = document.getElementById('emptyState');
         const scrollDiv = document.getElementById('galleryScroll');
@@ -726,7 +725,7 @@
                 currentPhotos = images.map(img => ({
                     id: img.id,
                     url: img.link,
-                    thumb: img.link, // можно использовать img.url_thumb если есть, но link тоже подойдёт
+                    thumb: img.link,
                     name: img.img_name || 'Гость',
                     date: img.date
                 }));
