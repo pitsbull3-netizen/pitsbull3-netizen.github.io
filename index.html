@@ -794,15 +794,30 @@
         document.getElementById('lightboxImg').src = photo.url;
     }
     
-    function downloadCurrentPhoto() {
-        const img = document.getElementById('lightboxImg');
-        const link = document.createElement('a');
-        link.href = img.src;
-        link.download = `wedding_photo_${Date.now()}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('Скачивание начато');
+function downloadCurrentPhoto() {
+    const img = document.getElementById('lightboxImg');
+    const photo = currentPhotos[currentLightboxIndex];
+    
+    showToast('⏳ Скачивание...');
+
+    // Скачиваем картинку через fetch как Blob
+    fetch(photo.url)
+        .then(res => res.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `wedding_${photo.id || Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('✅ Скачивание начато');
+        })
+        .catch(err => {
+            console.error(err);
+            // Если не получилось (из-за защиты ImageBan), открываем в новой вкладке
+            window.open(photo.url, '_blank');
+            showToast('Открыто в новой вкладке (сохраните вручную)');
+        });
     }
     
     async function promptDeleteCurrentPhoto() {
