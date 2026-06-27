@@ -452,7 +452,7 @@
         </p>
         <div class="buttons">
             <button class="btn btn-primary" onclick="openUploadModal()">📸 Загрузить фото</button>
-            <button class="btn btn-secondary" onclick="openGalleryModal()"> Смотреть альбом</button>
+            <button class="btn btn-secondary" onclick="openGalleryModal()">🖼 Смотреть альбом</button>
         </div>
     </div>
 </div>
@@ -479,7 +479,7 @@
             <div id="successMsg" style="display:none; text-align:center; padding:1rem 0">
                 <div style="font-size:3rem">✨</div>
                 <h3>Спасибо!</h3>
-                <p>Все фото добавлены в альбом </p>
+                <p>Все фото добавлены в альбом 🤍</p>
                 <button class="btn btn-secondary" onclick="resetUpload()">➕ Загрузить ещё</button>
             </div>
         </div>
@@ -489,12 +489,12 @@
 <!-- Модалка галереи -->
 <div class="modal-overlay" id="galleryModal">
     <div class="modal">
-        <button class="modal-close" onclick="closeModal('galleryModal')"></button>
+        <button class="modal-close" onclick="closeModal('galleryModal')">✕</button>
         <div class="modal-header"><h2>🌸 Общий альбом</h2><p>Фотографии гостей</p></div>
         <div class="modal-body">
             <div id="galleryContent">
                 <div class="empty-state" id="emptyState" style="display:none">
-                    <div class="empty-icon"></div>
+                    <div class="empty-icon">📷</div>
                     <p>Пока нет загруженных фото</p>
                 </div>
                 <div id="galleryLoader" class="loader" style="display:block">
@@ -523,7 +523,7 @@
 
 <!-- Нижняя навигация -->
 <div class="bottom-nav">
-    <button class="nav-btn" onclick="scrollToHero()"><span></span><span>Главная</span></button>
+    <button class="nav-btn" onclick="scrollToHero()"><span>🏠</span><span>Главная</span></button>
     <button class="nav-btn" onclick="openUploadModal()"><span>📸</span><span>Загрузить</span></button>
     <button class="nav-btn" onclick="openGalleryModal()"><span>🖼️</span><span>Альбом</span></button>
 </div>
@@ -795,7 +795,7 @@
         document.getElementById('lightboxImg').src = photo.url;
     }
     
-    // === ОБНОВЛЕННАЯ ФУНКЦИЯ СКАЧИВАНИЯ ===
+    // === СКАЧИВАНИЕ ФОТО через прокси ===
     function downloadCurrentPhoto() {
         const photo = currentPhotos[currentLightboxIndex];
         if (photo && photo.url) {
