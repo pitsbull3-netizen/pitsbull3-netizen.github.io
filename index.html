@@ -6,7 +6,6 @@
     <title>Андрей & Ольга — Свадебный альбом</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Все ваши стили (оставьте без изменений) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Raleway', sans-serif;
@@ -453,7 +452,7 @@
         </p>
         <div class="buttons">
             <button class="btn btn-primary" onclick="openUploadModal()">📸 Загрузить фото</button>
-            <button class="btn btn-secondary" onclick="openGalleryModal()">🖼 Смотреть альбом</button>
+            <button class="btn btn-secondary" onclick="openGalleryModal()"> Смотреть альбом</button>
         </div>
     </div>
 </div>
@@ -480,7 +479,7 @@
             <div id="successMsg" style="display:none; text-align:center; padding:1rem 0">
                 <div style="font-size:3rem">✨</div>
                 <h3>Спасибо!</h3>
-                <p>Все фото добавлены в альбом 🤍</p>
+                <p>Все фото добавлены в альбом </p>
                 <button class="btn btn-secondary" onclick="resetUpload()">➕ Загрузить ещё</button>
             </div>
         </div>
@@ -490,12 +489,12 @@
 <!-- Модалка галереи -->
 <div class="modal-overlay" id="galleryModal">
     <div class="modal">
-        <button class="modal-close" onclick="closeModal('galleryModal')">✕</button>
+        <button class="modal-close" onclick="closeModal('galleryModal')"></button>
         <div class="modal-header"><h2>🌸 Общий альбом</h2><p>Фотографии гостей</p></div>
         <div class="modal-body">
             <div id="galleryContent">
                 <div class="empty-state" id="emptyState" style="display:none">
-                    <div class="empty-icon">📷</div>
+                    <div class="empty-icon"></div>
                     <p>Пока нет загруженных фото</p>
                 </div>
                 <div id="galleryLoader" class="loader" style="display:block">
@@ -524,7 +523,7 @@
 
 <!-- Нижняя навигация -->
 <div class="bottom-nav">
-    <button class="nav-btn" onclick="scrollToHero()"><span>🏠</span><span>Главная</span></button>
+    <button class="nav-btn" onclick="scrollToHero()"><span></span><span>Главная</span></button>
     <button class="nav-btn" onclick="openUploadModal()"><span>📸</span><span>Загрузить</span></button>
     <button class="nav-btn" onclick="openGalleryModal()"><span>🖼️</span><span>Альбом</span></button>
 </div>
@@ -534,7 +533,6 @@
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // Ваш прокси на Beget через домен с HTTPS
     const GATEWAY_URL = 'https://event-album.ru/proxy.php';
     const ALBUM_ID = 'my4n9zV';
     
@@ -629,6 +627,7 @@
         document.getElementById('uploadBtn').disabled = false;
     }
     
+    // === ЗАГРУЗКА ФОТО через прокси ===
     async function uploadMultiplePhotos() {
         if (!selectedFiles.length) { showToast('Выберите хотя бы одно фото'); return; }
         const guestName = document.getElementById('guestName').value.trim() || 'Гость';
@@ -703,6 +702,7 @@
         document.getElementById('successMsg').style.display = 'none';
     }
     
+    // === ПОЛУЧЕНИЕ СПИСКА ФОТО через прокси ===
     async function loadAlbumPhotos() {
         const emptyState = document.getElementById('emptyState');
         const scrollDiv = document.getElementById('galleryScroll');
@@ -714,7 +714,8 @@
         currentPhotos = [];
         
         try {
-            const url = `${GATEWAY_URL}?album=${ALBUM_ID}`;
+            // Добавляем &_t=${Date.now()}, чтобы браузер не кешировал ответ
+            const url = `${GATEWAY_URL}?album=${ALBUM_ID}&_t=${Date.now()}`;
             console.log('Fetching album from proxy:', url);
             const response = await fetch(url);
             const data = await response.json();
@@ -725,7 +726,7 @@
                 currentPhotos = images.map(img => ({
                     id: img.id,
                     url: img.link,
-                    thumb: img.link,
+                    thumb: img.url_thumb || img.link,
                     name: img.img_name || 'Гость',
                     date: img.date
                 }));
@@ -794,34 +795,18 @@
         document.getElementById('lightboxImg').src = photo.url;
     }
     
-function downloadCurrentPhoto() {
-    const img = document.getElementById('lightboxImg');
-    const photo = currentPhotos[currentLightboxIndex];
-    
-    showToast('⏳ Скачивание...');
-
-    // Скачиваем картинку через fetch как Blob
-    fetch(photo.url)
-        .then(res => res.blob())
-        .then(blob => {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `wedding_${photo.id || Date.now()}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('✅ Скачивание начато');
-        })
-        .catch(err => {
-            console.error(err);
-            // Если не получилось (из-за защиты ImageBan), открываем в новой вкладке
-            window.open(photo.url, '_blank');
-            showToast('Открыто в новой вкладке (сохраните вручную)');
-        });
+    // === ОБНОВЛЕННАЯ ФУНКЦИЯ СКАЧИВАНИЯ ===
+    function downloadCurrentPhoto() {
+        const photo = currentPhotos[currentLightboxIndex];
+        if (photo && photo.url) {
+            showToast('⏳ Скачивание...');
+            // Перенаправляем на прокси, который отдаст файл как скачивание
+            window.location.href = `${GATEWAY_URL}?download=${encodeURIComponent(photo.url)}`;
+        }
     }
     
     async function promptDeleteCurrentPhoto() {
-        showToast('Для удаления фото обратитель к виновникам торжества');
+        showToast('Удаление фото доступно только в личном кабинете ImageBan');
     }
     
     document.addEventListener('keydown', (e) => {
