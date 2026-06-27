@@ -467,7 +467,7 @@
                 <div class="upload-area" id="dropZone">
                     <div class="upload-icon">🖼️</div>
                     <h3>Нажмите или перетащите фото</h3>
-                    <p>Можно выбрать несколько JPG, PNG, WEBP, GIF (до 32 МБ каждое)</p>
+                    <p>Можно выбрать несколько JPG, PNG, WEBP, GIF (до 20 МБ каждое)</p>
                     <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple style="display:none">
                 </div>
                 <input type="text" class="name-input" id="guestName" placeholder="Ваше имя (как подписать фото)">
@@ -575,7 +575,7 @@
             return false;
         }
         if (file.size > 32 * 1024 * 1024) {
-            showToast(`Файл ${file.name} слишком большой. Максимум 32 МБ`);
+            showToast(`Файл ${file.name} слишком большой. Максимум 20 МБ`);
             return false;
         }
         return true;
